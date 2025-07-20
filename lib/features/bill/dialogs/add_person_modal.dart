@@ -76,7 +76,7 @@ class _AddPersonDialogState extends ConsumerState<AddPersonDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Agregar participante'),
+      title: Center(child: const Text('Participante')),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,

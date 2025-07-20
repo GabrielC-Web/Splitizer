@@ -99,7 +99,7 @@ class _BillScreenState extends ConsumerState<BillScreen> {
                   const Divider(height: 32),
 
                   ListTile(
-                    title: const Text('Total base de compras'),
+                    title: const Text('Monto base'),
                     trailing: Text(
                       '\$${ref.watch(riverpodPersonList).baseTotal.toStringAsFixed(2)}',
                     ),
@@ -112,7 +112,7 @@ class _BillScreenState extends ConsumerState<BillScreen> {
                       controller: _finalTotalController,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
-                        labelText: 'Monto total en la cuenta (con impuestos)',
+                        labelText: 'Monto total de la factura',
                         border: OutlineInputBorder(),
                       ),
                       onChanged: (_) => setState(() {}),
@@ -125,7 +125,7 @@ class _BillScreenState extends ConsumerState<BillScreen> {
                                     .watch(riverpodPersonList)
                                     .baseTotal
                                     .toDouble()) {
-                          return 'El monto total debería ser mayor al monto base';
+                          return 'El monto de la factura debería ser mayor al monto base';
                         }
                       },
                     ),
@@ -133,19 +133,22 @@ class _BillScreenState extends ConsumerState<BillScreen> {
                 ],
               ),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: MaterialButton(
-                    onPressed: () {
-                      ref.read(riverpodPersonList).reset();
-                    },
-                    child: Text('Reiniciar'),
-                    elevation: 2,
+            if (_finalTotalController.value.text.isNotEmpty &&
+                ref.watch(riverpodPersonList).participants.isNotEmpty)
+              Row(
+                children: [
+                  Expanded(
+                    child: FloatingActionButton.extended(
+                      onPressed: () {
+                        ref.read(riverpodPersonList).reset();
+                        _finalTotalController.clear();
+                      },
+                      label: Text('Reiniciar'),
+                      elevation: 2,
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
           ],
         ),
       ),

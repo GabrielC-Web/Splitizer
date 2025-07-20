@@ -14,7 +14,7 @@ class ParticipantWidget extends ConsumerStatefulWidget {
     super.key,
     required this.participant,
     required this.shares,
-    required this.index
+    required this.index,
   });
 
   @override
@@ -22,7 +22,6 @@ class ParticipantWidget extends ConsumerStatefulWidget {
 }
 
 class _ParticipantWidgetState extends ConsumerState<ParticipantWidget> {
-
   void _editPerson() async {
     await showDialog<Map<String, dynamic>>(
       context: context,
@@ -38,26 +37,31 @@ class _ParticipantWidgetState extends ConsumerState<ParticipantWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: ListTile(
-            title: Text(widget.participant?.name ?? ''),
-            subtitle: Text(
-              'Subtotal: \$${widget.participant?.subtotal.toStringAsFixed(2)}',
+    return Card(
+      child: Row(
+        children: [
+          Expanded(
+            child: ListTile(
+              title: Text(widget.participant?.name ?? ''),
+              subtitle: Text(
+                'Subtotal: \$${widget.participant?.subtotal.toStringAsFixed(2)}',
+              ),
+              trailing: widget.shares.containsKey(widget.participant?.name)
+                  ? Text(
+                      'Total final: \$${widget.shares[widget.participant?.name]!.toStringAsFixed(2)}',
+                    )
+                  : null,
             ),
-            trailing: widget.shares.containsKey(widget.participant?.name)
-                ? Text(
-                    'Total final: \$${widget.shares[widget.participant?.name]!.toStringAsFixed(2)}',
-                  )
-                : null,
           ),
-        ),
-        IconButton(onPressed: _editPerson, icon: const Icon(Icons.edit)),
-        IconButton(onPressed: () {
-          ref.read(riverpodPersonList).removeParticipant(widget.index);
-        }, icon: const Icon(Icons.delete)),
-      ],
+          IconButton(onPressed: _editPerson, icon: const Icon(Icons.edit)),
+          IconButton(
+            onPressed: () {
+              ref.read(riverpodPersonList).removeParticipant(widget.index);
+            },
+            icon: const Icon(Icons.delete),
+          ),
+        ],
+      ),
     );
   }
 }
