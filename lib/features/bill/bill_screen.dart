@@ -1,115 +1,118 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:splitizer/features/bill/widgets/participant.dart';
+import '../../core/state/riverpod.dart';
+import '../../models/person.dart';
 import '../../shared/app_scaffold.dart';
-import 'widgets/add_person_modal.dart';
+import 'dialogs/add_person_modal.dart';
 
-class Person {
-  final String name;
-  final List<double> purchases;
-
-  Person({required this.name, this.purchases = const []});
-
-  double get subtotal => purchases.fold(0.0, (sum, item) => sum + item);
-}
-
-class BillScreen extends StatefulWidget {
+class BillScreen extends ConsumerStatefulWidget {
   const BillScreen({super.key});
 
   @override
-  State<BillScreen> createState() => _BillScreenState();
+  ConsumerState<BillScreen> createState() => _BillScreenState();
 }
 
-class _BillScreenState extends State<BillScreen> {
-  final TextEditingController _titleController = TextEditingController();
+class _BillScreenState extends ConsumerState<BillScreen> {
   final TextEditingController _finalTotalController = TextEditingController();
 
-  final List<Person> _people = [];
-
-  double get baseTotal =>
-      _people.fold(0.0, (sum, p) => sum + p.subtotal);
 
   Map<String, double> get calculatedShares {
     final inputTotal = double.tryParse(_finalTotalController.text);
-    if (inputTotal == null || baseTotal == 0) return {};
+    if (inputTotal == null || ref.watch(riverpodPersonList).baseTotal == 0) return {};
     return {
-      for (final p in _people)
-        p.name: ((p.subtotal / baseTotal) * inputTotal)
+      for (final p in ref.watch(riverpodPersonList).participants) p.name: ((p.subtotal / ref.watch(riverpodPersonList).baseTotal) * inputTotal),
     };
   }
 
   void _addPerson() async {
-    print('hello');
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => AddPersonDialog(),
     );
 
-    print('aver $result');
-
     if (result != null) {
-      final newPerson = Person(
+      final newParticipant = Participant(
         name: result['name'],
         purchases: List<double>.from(result['purchases']),
       );
-      setState(() => _people.add(newPerson));
+      ref.read(riverpodPersonList).addParticipant(newParticipant);
     }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final shares = calculatedShares;
 
-    return AppScaffold(title: 'Nueva Cuenta', child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: ListView(
-        children: [
-          TextField(
-            controller: _titleController,
-            decoration: const InputDecoration(
-              labelText: 'Título de la cuenta',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 24),
+    return AppScaffold(
+      title: 'Splitizer',
+      showBack: false,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Participantes',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      TextButton.icon(
+                        icon: const Icon(Icons.person_add_alt),
+                        label: const Text('Agregar'),
+                        onPressed: _addPerson,
+                      ),
+                    ],
+                  ),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('Participantes', style: TextStyle(fontSize: 18)),
-              TextButton.icon(
-                icon: const Icon(Icons.person_add_alt),
-                label: const Text('Agregar'),
-                onPressed: _addPerson,
+                  ...ref.watch(riverpodPersonList).participants.asMap().entries.map(
+                    (p) => ParticipantWidget(participant: p.value, shares: shares, index: p.key),
+                  ),
+
+                  const Divider(height: 32),
+
+                  ListTile(
+                    title: const Text('Total base de compras'),
+                    trailing: Text('\$${ref.watch(riverpodPersonList).baseTotal.toStringAsFixed(2)}'),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  TextField(
+                    controller: _finalTotalController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: 'Monto total en la cuenta (con impuestos)',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (_) => setState(() {}),
+                  ),
+                ],
               ),
-            ],
-          ),
-
-          ..._people.map((p) => ListTile(
-            title: Text(p.name),
-            subtitle: Text('Subtotal: \$${p.subtotal.toStringAsFixed(2)}'),
-            trailing: shares.containsKey(p.name)
-                ? Text('\$${shares[p.name]!.toStringAsFixed(2)}')
-                : null,
-          )),
-
-          const Divider(height: 32),
-
-          ListTile(
-            title: const Text('Total base de compras'),
-            trailing: Text('\$${baseTotal.toStringAsFixed(2)}'),
-          ),
-
-          const SizedBox(height: 16),
-
-          TextField(
-            controller: _finalTotalController,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'Monto total en la cuenta (con impuestos)',
-              border: OutlineInputBorder(),
             ),
-            onChanged: (_) => setState(() {}),
-          ),
-        ],
-      )));
+            Row(
+              children: [
+                Expanded(
+                  child: MaterialButton(
+                    onPressed: () {},
+                    child: Text('Reiniciar'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

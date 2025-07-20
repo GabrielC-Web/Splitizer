@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'core/routing/app_router.dart';
 
-void main() => runApp(const SplitizerApp());
+
+void main() => runApp(ProviderScope(child: const SplitizerApp()));
 
 class SplitizerApp extends StatelessWidget {
   const SplitizerApp({super.key});

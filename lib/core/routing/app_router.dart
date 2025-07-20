@@ -5,13 +5,13 @@ import '../../features/home/home_screen.dart';
 import '../../features/bill/bill_screen.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/bill',
   routes: [
-    GoRoute(
-      path: '/',
-      name: 'home',
-      builder: (context, state) => const HomeScreen(),
-    ),
+    // GoRoute(
+    //   path: '/',
+    //   name: 'home',
+    //   builder: (context, state) => const HomeScreen(),
+    // ),
     GoRoute(
       path: '/bill',
       name: 'bill',

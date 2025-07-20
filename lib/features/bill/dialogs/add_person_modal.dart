@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:splitizer/core/state/riverpod.dart';
+import 'package:splitizer/models/person.dart';
 
-class AddPersonDialog extends StatefulWidget {
-  const AddPersonDialog({super.key});
+class AddPersonDialog extends ConsumerStatefulWidget {
+
+  final int? index;
+  final Participant? savedParticipant;
+
+  const AddPersonDialog({super.key, this.index, this.savedParticipant});
 
   @override
-  State<AddPersonDialog> createState() => _AddPersonDialogState();
+  ConsumerState<AddPersonDialog> createState() => _AddPersonDialogState();
 }
 
-class _AddPersonDialogState extends State<AddPersonDialog> {
-  final nameController = TextEditingController();
-  final purchaseNameController = TextEditingController();
-  final purchaseAmountController = TextEditingController();
-  final List<double> purchases = [];
+class _AddPersonDialogState extends ConsumerState<AddPersonDialog> {
+  var nameController = TextEditingController();
+  var purchaseNameController = TextEditingController();
+  var purchaseAmountController = TextEditingController();
+  List<double> purchases = [];
 
   void _addPurchase() {
     final value = double.tryParse(purchaseAmountController.text);
@@ -23,6 +30,22 @@ class _AddPersonDialogState extends State<AddPersonDialog> {
         purchaseAmountController.clear();
       });
     }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if(widget.index != null && widget.savedParticipant != null) {
+        print('loaded ${widget.savedParticipant!.purchases}');
+        nameController = TextEditingController(text: widget.savedParticipant?.name.toString());
+        purchases.clear();
+        purchases.addAll([...widget.savedParticipant!.purchases]);
+      }
+    });
+
   }
 
   @override
@@ -77,7 +100,17 @@ class _AddPersonDialogState extends State<AddPersonDialog> {
         ),
         ElevatedButton(
           onPressed: () {
-            print('met ${nameController.text.isNotEmpty && purchases.isNotEmpty}');
+
+            //* edit
+            if(widget.index != null && widget.savedParticipant != null) {
+              ref.read(riverpodPersonList).editParticipant(widget.index!, {
+                'name': nameController.text,
+                'purchases': purchases,
+              } as Participant);
+              return;
+            }
+
+            //* Add
             if (nameController.text.isNotEmpty && purchases.isNotEmpty) {
               Navigator.pop(context, {
                 'name': nameController.text,

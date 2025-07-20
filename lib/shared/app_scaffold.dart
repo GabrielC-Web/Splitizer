@@ -26,7 +26,7 @@ class AppScaffold extends StatelessWidget {
           },
         )
             : null,
-        title: Text(title),
+        title: Center(child: Text(title)),
       ),
       body: child,
     );
