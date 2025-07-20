@@ -22,6 +22,7 @@ class RiverpodModel extends ChangeNotifier {
 
   void editParticipant(int index, Participant participant) {
     participants[index] = participant;
+    notifyListeners();
   }
 
   // int calculateFinalShares() {
