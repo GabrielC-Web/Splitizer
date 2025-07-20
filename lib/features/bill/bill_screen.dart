@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:splitizer/features/bill/widgets/participant.dart';
+
 import '../../core/state/riverpod.dart';
 import '../../models/person.dart';
 import '../../shared/app_scaffold.dart';
@@ -16,12 +17,15 @@ class BillScreen extends ConsumerStatefulWidget {
 class _BillScreenState extends ConsumerState<BillScreen> {
   final TextEditingController _finalTotalController = TextEditingController();
 
-
   Map<String, double> get calculatedShares {
     final inputTotal = double.tryParse(_finalTotalController.text);
-    if (inputTotal == null || ref.watch(riverpodPersonList).baseTotal == 0) return {};
+    if (inputTotal == null || ref.watch(riverpodPersonList).baseTotal == 0)
+      return {};
     return {
-      for (final p in ref.watch(riverpodPersonList).participants) p.name: ((p.subtotal / ref.watch(riverpodPersonList).baseTotal) * inputTotal),
+      for (final p in ref.watch(riverpodPersonList).participants)
+        p.name:
+            ((p.subtotal / ref.watch(riverpodPersonList).baseTotal) *
+            inputTotal),
     };
   }
 
@@ -34,7 +38,7 @@ class _BillScreenState extends ConsumerState<BillScreen> {
     if (result != null) {
       final newParticipant = Participant(
         name: result['name'],
-        purchases: List<double>.from(result['purchases']),
+        purchases: List<Purchase>.from(result['purchases']),
       );
       ref.read(riverpodPersonList).addParticipant(newParticipant);
     }
@@ -42,7 +46,6 @@ class _BillScreenState extends ConsumerState<BillScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -67,35 +70,65 @@ class _BillScreenState extends ConsumerState<BillScreen> {
                         'Participantes',
                         style: TextStyle(fontSize: 18),
                       ),
-                      TextButton.icon(
-                        icon: const Icon(Icons.person_add_alt),
-                        label: const Text('Agregar'),
+                      // TextButton.icon(
+                      //   icon: const Icon(Icons.person_add_alt),
+                      //   label: const Text('Agregar'),
+                      //   onPressed: _addPerson,
+                      // ),
+                      FloatingActionButton.extended(
                         onPressed: _addPerson,
+                        label: const Text('Agregar'),
+                        icon: const Icon(Icons.person_add_alt),
                       ),
                     ],
                   ),
 
-                  ...ref.watch(riverpodPersonList).participants.asMap().entries.map(
-                    (p) => ParticipantWidget(participant: p.value, shares: shares, index: p.key),
-                  ),
+                  ...ref
+                      .watch(riverpodPersonList)
+                      .participants
+                      .asMap()
+                      .entries
+                      .map(
+                        (p) => ParticipantWidget(
+                          participant: p.value,
+                          shares: shares,
+                          index: p.key,
+                        ),
+                      ),
 
                   const Divider(height: 32),
 
                   ListTile(
                     title: const Text('Total base de compras'),
-                    trailing: Text('\$${ref.watch(riverpodPersonList).baseTotal.toStringAsFixed(2)}'),
+                    trailing: Text(
+                      '\$${ref.watch(riverpodPersonList).baseTotal.toStringAsFixed(2)}',
+                    ),
                   ),
 
                   const SizedBox(height: 16),
 
-                  TextField(
-                    controller: _finalTotalController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Monto total en la cuenta (con impuestos)',
-                      border: OutlineInputBorder(),
+                  Form(
+                    child: TextFormField(
+                      controller: _finalTotalController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Monto total en la cuenta (con impuestos)',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (_) => setState(() {}),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value != null &&
+                            value.isNotEmpty &&
+                            double.parse(value) <
+                                ref
+                                    .watch(riverpodPersonList)
+                                    .baseTotal
+                                    .toDouble()) {
+                          return 'El monto total debería ser mayor al monto base';
+                        }
+                      },
                     ),
-                    onChanged: (_) => setState(() {}),
                   ),
                 ],
               ),
@@ -104,8 +137,11 @@ class _BillScreenState extends ConsumerState<BillScreen> {
               children: [
                 Expanded(
                   child: MaterialButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      ref.read(riverpodPersonList).reset();
+                    },
                     child: Text('Reiniciar'),
+                    elevation: 2,
                   ),
                 ),
               ],

@@ -19,12 +19,11 @@ class AppScaffold extends StatelessWidget {
       appBar: AppBar(
         leading: showBack
             ? IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            print('Can pop: ${context.canPop()}');
-            context.pop();
-          },
-        )
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  context.pop();
+                },
+              )
             : null,
         title: Center(child: Text(title)),
       ),

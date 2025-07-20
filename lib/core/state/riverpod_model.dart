@@ -7,14 +7,13 @@ class RiverpodModel extends ChangeNotifier {
 
   double get baseTotal => participants.fold(0.0, (sum, p) => sum + p.subtotal);
 
-  RiverpodModel({
-    required this.participants,
-  });
+  RiverpodModel({required this.participants});
   void addParticipant(Participant participant) {
     participants.add(participant);
     print('participants: ${participants.toList()}');
     notifyListeners();
   }
+
   void removeParticipant(int index) {
     participants.removeAt(index);
     notifyListeners();
@@ -22,6 +21,11 @@ class RiverpodModel extends ChangeNotifier {
 
   void editParticipant(int index, Participant participant) {
     participants[index] = participant;
+    notifyListeners();
+  }
+
+  void reset() {
+    participants.clear();
     notifyListeners();
   }
 
