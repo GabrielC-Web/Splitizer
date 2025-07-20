@@ -63,6 +63,32 @@ class _BillScreenState extends ConsumerState<BillScreen> {
             Expanded(
               child: ListView(
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Form(
+                      child: TextFormField(
+                        controller: _finalTotalController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'Monto total de la factura',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (_) => setState(() {}),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value != null &&
+                              value.isNotEmpty &&
+                              double.parse(value) <
+                                  ref
+                                      .watch(riverpodPersonList)
+                                      .baseTotal
+                                      .toDouble()) {
+                            return 'El monto de la factura debería ser mayor al monto base';
+                          }
+                        },
+                      ),
+                    ),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -70,16 +96,12 @@ class _BillScreenState extends ConsumerState<BillScreen> {
                         'Participantes',
                         style: TextStyle(fontSize: 18),
                       ),
+
                       // TextButton.icon(
                       //   icon: const Icon(Icons.person_add_alt),
                       //   label: const Text('Agregar'),
                       //   onPressed: _addPerson,
                       // ),
-                      FloatingActionButton.extended(
-                        onPressed: _addPerson,
-                        label: const Text('Agregar'),
-                        icon: const Icon(Icons.person_add_alt),
-                      ),
                     ],
                   ),
 
@@ -106,49 +128,48 @@ class _BillScreenState extends ConsumerState<BillScreen> {
                   ),
 
                   const SizedBox(height: 16),
-
-                  Form(
-                    child: TextFormField(
-                      controller: _finalTotalController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'Monto total de la factura',
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (_) => setState(() {}),
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: (value) {
-                        if (value != null &&
-                            value.isNotEmpty &&
-                            double.parse(value) <
-                                ref
-                                    .watch(riverpodPersonList)
-                                    .baseTotal
-                                    .toDouble()) {
-                          return 'El monto de la factura debería ser mayor al monto base';
-                        }
-                      },
-                    ),
-                  ),
                 ],
               ),
             ),
-            if (_finalTotalController.value.text.isNotEmpty &&
-                ref.watch(riverpodPersonList).participants.isNotEmpty)
-              Row(
-                children: [
+
+            Row(
+              children: [
+                if (_finalTotalController.value.text.isNotEmpty &&
+                    ref.watch(riverpodPersonList).participants.isNotEmpty)
                   Expanded(
-                    child: FloatingActionButton.extended(
-                      onPressed: () {
-                        ref.read(riverpodPersonList).reset();
-                        _finalTotalController.clear();
-                      },
-                      label: Text('Reiniciar'),
-                      elevation: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: FloatingActionButton.extended(
+                        onPressed: () {
+                          ref.read(riverpodPersonList).reset();
+                          _finalTotalController.clear();
+                        },
+                        label: Text('Reiniciar'),
+                        elevation: 2,
+                      ),
                     ),
                   ),
-                ],
-              ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left:
+                          _finalTotalController.value.text.isNotEmpty &&
+                              ref
+                                  .watch(riverpodPersonList)
+                                  .participants
+                                  .isNotEmpty
+                          ? 8.0
+                          : 0,
+                    ),
+                    child: FloatingActionButton.extended(
+                      onPressed: _addPerson,
+                      label: const Text('Agregar'),
+                      icon: const Icon(Icons.person_add_alt),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

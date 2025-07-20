@@ -59,7 +59,7 @@ class AppScaffold extends StatelessWidget {
                   TextSpan(text: 'Nota: ', style: boldNoteStyle),
                   TextSpan(
                     text:
-                        'Añade a los participantes de pagar una cuenta repartida y calcula la parte de cada uno de manera justa!',
+                        'Añade a los participantes de una cuenta compartida y calcula la parte de cada uno de manera justa y precisa!',
                     style: defaultNoteStyle,
                   ),
                 ],
