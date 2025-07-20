@@ -6,9 +6,8 @@ import 'package:splitizer/models/person.dart';
 class AddPersonDialog extends ConsumerStatefulWidget {
 
   final int? index;
-  final Participant? savedParticipant;
 
-  const AddPersonDialog({super.key, this.index, this.savedParticipant});
+  const AddPersonDialog({super.key, this.index});
 
   @override
   ConsumerState<AddPersonDialog> createState() => _AddPersonDialogState();
@@ -18,7 +17,7 @@ class _AddPersonDialogState extends ConsumerState<AddPersonDialog> {
   var nameController = TextEditingController();
   var purchaseNameController = TextEditingController();
   var purchaseAmountController = TextEditingController();
-  List<double> purchases = [];
+  late List<double> purchases = [];
 
   void _addPurchase() {
     final value = double.tryParse(purchaseAmountController.text);
@@ -34,18 +33,18 @@ class _AddPersonDialogState extends ConsumerState<AddPersonDialog> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+  }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if(widget.index != null && widget.savedParticipant != null) {
-        print('loaded ${widget.savedParticipant!.purchases}');
-        nameController = TextEditingController(text: widget.savedParticipant?.name.toString());
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+      if(widget.index != null) {
+        print('loaded ${ref.read(riverpodPersonList).participants[widget.index as int].name}');
+        nameController = TextEditingController(text: ref.read(riverpodPersonList).participants[widget.index as int].name.toString());
         purchases.clear();
-        purchases.addAll([...widget.savedParticipant!.purchases]);
+        purchases.addAll([...ref.read(riverpodPersonList).participants[widget.index as int].purchases]);
       }
-    });
-
   }
 
   @override
@@ -102,11 +101,12 @@ class _AddPersonDialogState extends ConsumerState<AddPersonDialog> {
           onPressed: () {
 
             //* edit
-            if(widget.index != null && widget.savedParticipant != null) {
-              ref.read(riverpodPersonList).editParticipant(widget.index!, {
+            if(widget.index != null) {
+              ref.read(riverpodPersonList).editParticipant(widget.index!, Participant.fromMap({
                 'name': nameController.text,
                 'purchases': purchases,
-              } as Participant);
+              }));
+              Navigator.pop(context);
               return;
             }
 

@@ -24,9 +24,9 @@ class ParticipantWidget extends ConsumerStatefulWidget {
 class _ParticipantWidgetState extends ConsumerState<ParticipantWidget> {
 
   void _editPerson() async {
-    final result = await showDialog<Map<String, dynamic>>(
+    await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (context) => AddPersonDialog(index: widget.index, savedParticipant: widget.participant),
+      builder: (context) => AddPersonDialog(index: widget.index),
     );
   }
 
@@ -54,6 +54,9 @@ class _ParticipantWidgetState extends ConsumerState<ParticipantWidget> {
           ),
         ),
         IconButton(onPressed: _editPerson, icon: const Icon(Icons.edit)),
+        IconButton(onPressed: () {
+          ref.read(riverpodPersonList).removeParticipant(widget.index);
+        }, icon: const Icon(Icons.delete)),
       ],
     );
   }
