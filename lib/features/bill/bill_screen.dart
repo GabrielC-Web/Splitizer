@@ -71,6 +71,7 @@ class _BillScreenState extends ConsumerState<BillScreen> {
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           labelText: 'Monto total de la factura',
+                          hintText: 'Ej: 27.34',
                           border: OutlineInputBorder(),
                         ),
                         onChanged: (_) => setState(() {}),
@@ -117,17 +118,16 @@ class _BillScreenState extends ConsumerState<BillScreen> {
                           index: p.key,
                         ),
                       ),
-
-                  const Divider(height: 32),
-
-                  ListTile(
-                    title: const Text('Monto base'),
-                    trailing: Text(
-                      '\$${ref.watch(riverpodPersonList).baseTotal.toStringAsFixed(2)}',
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
+                  //? Puede ser confuso mostrarlo
+                  // const Divider(height: 32),
+                  // ListTile(
+                  //   title: const Text('Monto base'),
+                  //   trailing: Text(
+                  //     '\$${ref.watch(riverpodPersonList).baseTotal.toStringAsFixed(2)}',
+                  //   ),
+                  // ),
+                  //
+                  // const SizedBox(height: 16),
                 ],
               ),
             ),

@@ -77,57 +77,61 @@ class _AddPersonDialogState extends ConsumerState<AddPersonDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Center(child: const Text('Participante')),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: 'Nombre'),
-            ),
-            const SizedBox(height: 16),
-            Center(child: Text('Compras')),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: purchaseNameController,
-                    keyboardType: TextInputType.text,
-                    decoration: const InputDecoration(labelText: 'Item'),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: TextField(
-                    controller: purchaseAmountController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'Monto'),
-                  ),
-                ),
-                IconButton(
-                  onPressed: _addPurchase,
-                  icon: const Icon(Icons.add),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (purchases.isNotEmpty)
-              Wrap(
-                spacing: 8,
-                children: purchases
-                    .asMap()
-                    .entries
-                    .map(
-                      (p) => PurchaseItem(
-                        p: p.value,
-                        removeItem: () => _removePurchase(p.key),
-                      ),
-                    )
-                    .toList(),
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(
+          minWidth:
+              double.maxFinite, // Forces content to take max available width
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Nombre'),
               ),
-          ],
+              const SizedBox(height: 16),
+              Text('Agregar compra:'),
+              TextField(
+                controller: purchaseNameController,
+                keyboardType: TextInputType.text,
+                decoration: const InputDecoration(labelText: 'Descripción'),
+              ),
+              TextField(
+                controller: purchaseAmountController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Monto'),
+              ),
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: FloatingActionButton.extended(
+                    onPressed: _addPurchase,
+                    label: const Text('Agregar'),
+                    icon: const Icon(Icons.add),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text('Compras:'),
+              const SizedBox(height: 16),
+              if (purchases.isNotEmpty)
+                Wrap(
+                  spacing: 8,
+                  children: purchases
+                      .asMap()
+                      .entries
+                      .map(
+                        (p) => PurchaseItem(
+                          p: p.value,
+                          removeItem: () => _removePurchase(p.key),
+                        ),
+                      )
+                      .toList(),
+                ),
+            ],
+          ),
         ),
       ),
       actions: [
