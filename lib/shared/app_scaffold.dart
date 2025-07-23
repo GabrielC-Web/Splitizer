@@ -15,23 +15,9 @@ class AppScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double explanatoryTextHeight = 40.0;
-
-    // Define the text styles
-    final TextStyle? defaultNoteStyle = Theme.of(context).textTheme.bodySmall
-        ?.copyWith(
-          color:
-              Theme.of(context).appBarTheme.foregroundColor?.withOpacity(0.8) ??
-              (Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white70
-                  : Colors.black54),
-        );
-    final TextStyle? boldNoteStyle = defaultNoteStyle?.copyWith(
-      fontWeight: FontWeight.bold,
-    );
-
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         leading: showBack
             ? IconButton(
                 icon: const Icon(Icons.arrow_back),
@@ -40,37 +26,20 @@ class AppScaffold extends StatelessWidget {
                 },
               )
             : null,
-        title: Center(
-          child: Padding(padding: const EdgeInsets.all(16), child: Text(title)),
-        ),
+        title: Text(title),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // bottom: PreferredSize(
-        //   preferredSize: const Size.fromHeight(explanatoryTextHeight),
-        //   child: Container(
-        //     // color: Colors.orange, // Optional: for debugging layout
-        //     padding: const EdgeInsets.symmetric(
-        //       horizontal: 16.0,
-        //       vertical: 8.0,
-        //     ),
-        //     alignment: Alignment.centerLeft,
-        //     child: RichText(
-        //       text: TextSpan(
-        //         // Default style for the entire TextSpan (optional if all children have styles)
-        //         // style: defaultNoteStyle, // You can set it here or individually
-        //         children: <TextSpan>[
-        //           TextSpan(text: 'Nota: ', style: boldNoteStyle),
-        //           TextSpan(
-        //             text:
-        //                 'Añade a los participantes de una cuenta compartida y calcula la parte de cada uno de manera justa y precisa!',
-        //             style: defaultNoteStyle,
-        //           ),
-        //         ],
-        //       ),
-        //       maxLines: 2,
-        //       overflow: TextOverflow.ellipsis,
-        //     ),
-        //   ),
-        // ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              ModalRoute.of(context)?.settings.name == 'bill'
+                  ? context.go('/intro')
+                  : context.go('/bill');
+            },
+            icon: ModalRoute.of(context)?.settings.name == 'bill'
+                ? Icon(Icons.question_mark_rounded)
+                : Icon(Icons.home_rounded),
+          ),
+        ],
       ),
       body: Padding(padding: const EdgeInsets.all(16), child: child),
     );

@@ -2,10 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splitizer/shared/app_scaffold.dart';
-
-const String _kHasSeenIntroKey = 'hasSeenIntro';
 
 class IntroScreen extends StatefulWidget {
   const IntroScreen({super.key});
@@ -16,28 +13,6 @@ class IntroScreen extends StatefulWidget {
 
 class _IntroScreenState extends State<IntroScreen> {
   final introKey = GlobalKey<IntroductionScreenState>();
-  late Future<bool> _hasSeenIntroFuture;
-
-  // Asynchronously checks SharedPreferences
-  Future<bool> _checkIntroStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    // If _kHasSeenIntroKey exists and is true, then intro has been seen.
-    // Otherwise, (if null or false), it hasn't been seen.
-    return prefs.getBool(_kHasSeenIntroKey) ?? false;
-  }
-
-  Future _makeIntroSeen() async {
-    final prefs = await SharedPreferences.getInstance();
-    // Set the flag to true so intro doesn't show again
-    await prefs.setBool(_kHasSeenIntroKey, true);
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _hasSeenIntroFuture = _checkIntroStatus();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,11 +55,9 @@ class _IntroScreenState extends State<IntroScreen> {
           ),
         ],
         onDone: () {
-          _makeIntroSeen;
           context.go('/bill');
         },
         onSkip: () {
-          _makeIntroSeen;
           context.go('/bill');
         }, // You can override onSkip callback
         showSkipButton: true,
@@ -107,16 +80,20 @@ class _IntroScreenState extends State<IntroScreen> {
         controlsPadding: kIsWeb
             ? const EdgeInsets.all(12.0)
             : const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
-        dotsDecorator: const DotsDecorator(
+        dotsDecorator: DotsDecorator(
           size: Size(10.0, 10.0),
-          color: Color(0xFFBDBDBD),
+          color:
+              Theme.of(context).appBarTheme.foregroundColor?.withOpacity(0.8) ??
+              (Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white70
+                  : Colors.black54),
           activeSize: Size(22.0, 10.0),
           activeShape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(25.0)),
           ),
         ),
-        dotsContainerDecorator: const ShapeDecoration(
-          color: Colors.black87,
+        dotsContainerDecorator: ShapeDecoration(
+          color: Theme.of(context).colorScheme.inversePrimary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(8.0)),
           ),
