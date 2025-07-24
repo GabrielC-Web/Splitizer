@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:splitizer/shared/app_scaffold.dart';
 
@@ -66,14 +67,14 @@ class _IntroScreenState extends State<IntroScreen> {
         showBackButton: false,
         //rtl: true, // Display as right-to-left
         back: const Icon(Icons.arrow_back),
-        skip: const Text(
+        skip: Text(
           'Empezar',
-          style: TextStyle(fontWeight: FontWeight.w600),
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         next: const Icon(Icons.arrow_forward),
-        done: const Text(
+        done: Text(
           'Listo',
-          style: TextStyle(fontWeight: FontWeight.w600),
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         curve: Curves.fastLinearToSlowEaseIn,
         controlsMargin: const EdgeInsets.all(16),

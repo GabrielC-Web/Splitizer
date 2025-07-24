@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/state/riverpod.dart';
 import '../../../models/person.dart';
@@ -37,20 +39,44 @@ class _ParticipantWidgetState extends ConsumerState<ParticipantWidget> {
 
   @override
   Widget build(BuildContext context) {
+    var amountFormater = NumberFormat.currency(
+      locale: 'es_ES',
+      symbol: '\$',
+      decimalDigits: 2,
+    );
+
+    var formatedSubtotal = amountFormater.format(widget.participant?.subtotal);
+    var formatedTotal = widget.shares.containsKey(widget.participant?.name)
+        ? amountFormater.format(widget.shares[widget.participant?.name]!)
+        : '';
     return Card(
       child: Row(
         children: [
           Expanded(
-            child: ListTile(
-              title: Text(widget.participant?.name ?? ''),
-              subtitle: Text(
-                'Subtotal: \$${widget.participant?.subtotal.toStringAsFixed(2)}',
-              ),
-              trailing: widget.shares.containsKey(widget.participant?.name)
-                  ? Text(
-                      'Total final: \$${widget.shares[widget.participant?.name]!.toStringAsFixed(2)}',
-                    )
-                  : null,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListTile(
+                  title: Text(
+                    widget.participant?.name ?? '',
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  subtitle: Text('Subtotal: $formatedSubtotal'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, bottom: 16),
+                  child: Text(
+                    'Total final: $formatedTotal',
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           IconButton(onPressed: _editPerson, icon: const Icon(Icons.edit)),

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:splitizer/core/state/riverpod.dart';
 import 'package:splitizer/models/person.dart';
 
@@ -76,61 +79,93 @@ class _AddPersonDialogState extends ConsumerState<AddPersonDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Center(child: const Text('Participante')),
+      title: Center(
+        child: Text(
+          'Participante',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+      ),
       content: ConstrainedBox(
         constraints: const BoxConstraints(
           minWidth:
               double.maxFinite, // Forces content to take max available width
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Nombre'),
-              ),
-              const SizedBox(height: 16),
-              Text('Agregar compra:'),
-              TextField(
-                controller: purchaseNameController,
-                keyboardType: TextInputType.text,
-                decoration: const InputDecoration(labelText: 'Descripción'),
-              ),
-              TextField(
-                controller: purchaseAmountController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Monto'),
-              ),
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: FloatingActionButton.extended(
-                    onPressed: _addPurchase,
-                    label: const Text('Agregar'),
-                    icon: const Icon(Icons.add),
+        child: Scrollbar(
+          trackVisibility: true,
+          thumbVisibility: true,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: nameController,
+                    decoration: const InputDecoration(labelText: 'Nombre'),
                   ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text('Compras:'),
-              const SizedBox(height: 16),
-              if (purchases.isNotEmpty)
-                Wrap(
-                  spacing: 8,
-                  children: purchases
-                      .asMap()
-                      .entries
-                      .map(
-                        (p) => PurchaseItem(
-                          p: p.value,
-                          removeItem: () => _removePurchase(p.key),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Agregar compra:',
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  TextField(
+                    controller: purchaseNameController,
+                    keyboardType: TextInputType.text,
+                    decoration: const InputDecoration(labelText: 'Descripción'),
+                  ),
+                  TextField(
+                    controller: purchaseAmountController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                    ],
+                    decoration: const InputDecoration(labelText: 'Monto'),
+                  ),
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: FloatingActionButton.extended(
+                        onPressed: _addPurchase,
+                        label: const Text('Agregar'),
+                        icon: const Icon(Icons.add),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  if (purchases.isNotEmpty)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Compras:',
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
-                      )
-                      .toList(),
-                ),
-            ],
+                        const SizedBox(height: 16),
+                        Wrap(
+                          spacing: 8,
+                          children: purchases
+                              .asMap()
+                              .entries
+                              .map(
+                                (p) => PurchaseItem(
+                                  p: p.value,
+                                  removeItem: () => _removePurchase(p.key),
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -140,7 +175,13 @@ class _AddPersonDialogState extends ConsumerState<AddPersonDialog> {
           children: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancelar'),
+              child: Text(
+                'Cancelar',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
             ),
             ElevatedButton(
               onPressed: () {
@@ -167,7 +208,13 @@ class _AddPersonDialogState extends ConsumerState<AddPersonDialog> {
                   });
                 }
               },
-              child: const Text('Guardar'),
+              child: Text(
+                'Guardar',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
             ),
           ],
         ),
@@ -184,9 +231,18 @@ class PurchaseItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var amountFormater = NumberFormat.currency(
+      locale: 'es_ES',
+      symbol: '\$',
+      decimalDigits: 2,
+    );
+
+    var formatedAmount = amountFormater.format(p.amount);
+
     return Flexible(
       child: Chip(
-        label: Text('${p.item} - \$${p.amount.toStringAsFixed(2)}'),
+        // label: Text('${p.item} - \$${p.amount.toStringAsFixed(2)}'),
+        label: Text('${p.item} - $formatedAmount'),
         deleteIcon: Icon(Icons.delete),
         onDeleted: removeItem,
       ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:splitizer/features/bill/widgets/participant.dart';
 
 import '../../core/state/riverpod.dart';
@@ -59,6 +61,7 @@ class _BillScreenState extends ConsumerState<BillScreen> {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: ListView(
@@ -69,6 +72,11 @@ class _BillScreenState extends ConsumerState<BillScreen> {
                       child: TextFormField(
                         controller: _finalTotalController,
                         keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'^\d*\.?\d*'),
+                          ),
+                        ],
                         decoration: const InputDecoration(
                           labelText: 'Monto total de la factura',
                           hintText: 'Ej: 27.34',
@@ -90,20 +98,37 @@ class _BillScreenState extends ConsumerState<BillScreen> {
                       ),
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Participantes',
-                        style: TextStyle(fontSize: 18),
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Participantes',
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Agrega a los responsables de pagar la cuenta,\nañade el precio base de cada compra',
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
 
-                      // TextButton.icon(
-                      //   icon: const Icon(Icons.person_add_alt),
-                      //   label: const Text('Agregar'),
-                      //   onPressed: _addPerson,
-                      // ),
-                    ],
+                        // TextButton.icon(
+                        //   icon: const Icon(Icons.person_add_alt),
+                        //   label: const Text('Agregar'),
+                        //   onPressed: _addPerson,
+                        // ),
+                      ],
+                    ),
                   ),
 
                   ...ref
@@ -144,7 +169,13 @@ class _BillScreenState extends ConsumerState<BillScreen> {
                           ref.read(riverpodPersonList).reset();
                           _finalTotalController.clear();
                         },
-                        label: Text('Reiniciar'),
+                        label: Text(
+                          'Reiniciar',
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
                         elevation: 2,
                       ),
                     ),
@@ -163,7 +194,13 @@ class _BillScreenState extends ConsumerState<BillScreen> {
                     ),
                     child: FloatingActionButton.extended(
                       onPressed: _addPerson,
-                      label: const Text('Agregar'),
+                      label: Text(
+                        'Agregar',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
                       icon: const Icon(Icons.person_add_alt),
                     ),
                   ),
