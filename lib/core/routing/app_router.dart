@@ -14,12 +14,14 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/bill',
       name: 'bill',
-      builder: (context, state) => const BillScreen(),
+      pageBuilder: (context, state) =>
+          NoTransitionPage<void>(child: const BillScreen()),
     ),
     GoRoute(
       path: '/intro',
       name: 'intro',
-      builder: (context, state) => const IntroScreen(),
+      pageBuilder: (context, state) =>
+          NoTransitionPage<void>(child: const IntroScreen()),
     ),
   ],
 );

@@ -35,11 +35,12 @@ class AppScaffold extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              ModalRoute.of(context)?.settings.name == 'bill'
+              print('route ${ModalRoute.of(context)?.settings}');
+              GoRouter.of(context).state.name == 'bill'
                   ? context.go('/intro')
                   : context.go('/bill');
             },
-            icon: ModalRoute.of(context)?.settings.name == 'bill'
+            icon: GoRouter.of(context).state.name == 'bill'
                 ? Icon(Icons.question_mark_rounded)
                 : Icon(Icons.home_rounded),
           ),
