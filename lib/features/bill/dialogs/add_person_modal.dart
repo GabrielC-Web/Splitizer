@@ -139,6 +139,7 @@ class _AddPersonDialogState extends ConsumerState<AddPersonDialog> {
                   if (purchases.isNotEmpty)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           'Compras:',
@@ -239,13 +240,11 @@ class PurchaseItem extends StatelessWidget {
 
     var formatedAmount = amountFormater.format(p.amount);
 
-    return Flexible(
-      child: Chip(
-        // label: Text('${p.item} - \$${p.amount.toStringAsFixed(2)}'),
-        label: Text('${p.item} - $formatedAmount'),
-        deleteIcon: Icon(Icons.delete),
-        onDeleted: removeItem,
-      ),
+    return Chip(
+      // label: Text('${p.item} - \$${p.amount.toStringAsFixed(2)}'),
+      label: Text('${p.item} - $formatedAmount'),
+      deleteIcon: Icon(Icons.delete),
+      onDeleted: removeItem,
     );
   }
 }
