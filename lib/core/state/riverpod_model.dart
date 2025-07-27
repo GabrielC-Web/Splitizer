@@ -39,3 +39,14 @@ class RiverpodModel extends ChangeNotifier {
   //   }
   // }
 }
+
+class RiverpodThemeModeModel extends ChangeNotifier {
+  String themeMode;
+
+  RiverpodThemeModeModel({required this.themeMode});
+
+  void setThemeMode(String theme) {
+    themeMode = theme;
+    notifyListeners();
+  }
+}

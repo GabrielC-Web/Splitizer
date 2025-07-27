@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:splitizer/core/state/riverpod.dart';
 
-class AppScaffold extends StatelessWidget {
+class AppScaffold extends ConsumerWidget {
   final String title;
   final Widget child;
   final bool showBack;
@@ -15,7 +17,7 @@ class AppScaffold extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -35,7 +37,16 @@ class AppScaffold extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              print('route ${ModalRoute.of(context)?.settings}');
+              ref.read(riverpodThemeMode).themeMode == 'light'
+                  ? ref.read(riverpodThemeMode).setThemeMode('dark')
+                  : ref.read(riverpodThemeMode).setThemeMode('light');
+            },
+            icon: ref.read(riverpodThemeMode).themeMode == 'light'
+                ? Icon(Icons.dark_mode)
+                : Icon(Icons.light_mode),
+          ),
+          IconButton(
+            onPressed: () {
               GoRouter.of(context).state.name == 'bill'
                   ? context.go('/intro')
                   : context.go('/bill');
