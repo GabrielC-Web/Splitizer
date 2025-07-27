@@ -56,16 +56,38 @@ class _ParticipantWidgetState extends ConsumerState<ParticipantWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ListTile(
-                  title: Text(
-                    widget.participant?.name ?? '',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Flexible(
+                      child: ListTile(
+                        title: Text(
+                          widget.participant?.name ?? '',
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                        // subtitle: Text('Subtotal: $formatedSubtotal'),
+                      ),
                     ),
-                  ),
-                  subtitle: Text('Subtotal: $formatedSubtotal'),
+                    IconButton(
+                      onPressed: _editPerson,
+                      icon: const Icon(Icons.edit),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        ref
+                            .read(riverpodPersonList)
+                            .removeParticipant(widget.index);
+                      },
+                      icon: const Icon(Icons.delete),
+                    ),
+                  ],
                 ),
+                Divider(),
                 Padding(
                   padding: const EdgeInsets.only(left: 16, bottom: 16),
                   child: Text(
@@ -78,13 +100,6 @@ class _ParticipantWidgetState extends ConsumerState<ParticipantWidget> {
                 ),
               ],
             ),
-          ),
-          IconButton(onPressed: _editPerson, icon: const Icon(Icons.edit)),
-          IconButton(
-            onPressed: () {
-              ref.read(riverpodPersonList).removeParticipant(widget.index);
-            },
-            icon: const Icon(Icons.delete),
           ),
         ],
       ),
