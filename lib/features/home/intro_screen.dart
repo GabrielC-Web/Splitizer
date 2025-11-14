@@ -53,10 +53,10 @@ class _IntroScreenState extends State<IntroScreen> {
           ),
         ],
         onDone: () {
-          context.go('/bill');
+          context.go('/bill2');
         },
         onSkip: () {
-          context.go('/bill');
+          context.go('/bill2');
         }, // You can override onSkip callback
         showSkipButton: true,
         skipOrBackFlex: 0,

@@ -7,13 +7,20 @@ import 'package:splitizer/core/state/riverpod.dart';
 class AppScaffold extends ConsumerWidget {
   final String title;
   final Widget child;
+  final Widget bottomButtonContent;
   final bool showBack;
+  final VoidCallback? onButtonPressed;
 
   const AppScaffold({
     super.key,
     required this.title,
     required this.child,
+    this.bottomButtonContent = const Text(
+      'Dividir cuenta',
+      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    ),
     this.showBack = true,
+    this.onButtonPressed,
   });
 
   @override
@@ -58,6 +65,19 @@ class AppScaffold extends ConsumerWidget {
         ],
       ),
       body: Padding(padding: const EdgeInsets.all(16), child: child),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ElevatedButton(
+          onPressed: onButtonPressed,
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(double.infinity, 56),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+          child: bottomButtonContent,
+        ),
+      ),
     );
   }
 }

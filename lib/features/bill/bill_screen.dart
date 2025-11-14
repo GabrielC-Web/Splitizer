@@ -103,23 +103,25 @@ class _BillScreenState extends ConsumerState<BillScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Participantes',
-                              style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Participantes',
+                                style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Agrega a los responsables de pagar la cuenta,\nañade el precio base de cada compra',
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+                              const SizedBox(height: 16),
+                              Text(
+                                'Primero agrega a los responsables de pagar la cuenta, añade el precio base de cada compra',
+                                maxLines: 4,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
                         ),
 
                         // TextButton.icon(
@@ -195,7 +197,7 @@ class _BillScreenState extends ConsumerState<BillScreen> {
                     child: FloatingActionButton.extended(
                       onPressed: _addPerson,
                       label: Text(
-                        'Agregar',
+                        'Dividir cuenta',
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
