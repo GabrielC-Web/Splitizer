@@ -46,15 +46,14 @@ class _BillFormScreenState extends State<BillFormScreen> {
     return AppScaffold(
       title: "Nueva división",
       bottomButtonContent: const Text(
-        "Continuar",
+        "Guardar",
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       child: Form(
         key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.only(bottom: 120),
+        child: Column(
           children: [
-            // BILL TITLE
+            // TITLE
             TextFormField(
               controller: titleController,
               decoration: const InputDecoration(
@@ -70,7 +69,99 @@ class _BillFormScreenState extends State<BillFormScreen> {
             ),
             const SizedBox(height: 16),
 
-            // TOTAL AMOUNT
+            // PARTICIPANTS SECTION (EXPANDS)
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Section header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Participantes",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      TextButton(
+                        onPressed: addParticipant,
+                        child: const Text("Agregar"),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Dynamic list – scrollable, fills available space
+                  Expanded(
+                    child: participants.isEmpty
+                        ? Center(
+                            child: Text(
+                              "No hay participantes agregados todavía.",
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          )
+                        : ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: participants.length,
+                            itemBuilder: (context, index) {
+                              final p = participants[index];
+
+                              return Card(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                elevation: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    children: [
+                                      TextFormField(
+                                        controller: p.nameController,
+                                        decoration: const InputDecoration(
+                                          labelText: "Nombre",
+                                          hintText: "Ej: Gabriel",
+                                        ),
+                                        validator: (value) {
+                                          if (value == null ||
+                                              value.trim().isEmpty) {
+                                            return "Ingresa un nombre";
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                      const SizedBox(height: 12),
+                                      TextFormField(
+                                        controller: p.amountController,
+                                        keyboardType: TextInputType.number,
+                                        decoration: const InputDecoration(
+                                          labelText: "Monto (opcional)",
+                                          hintText:
+                                              "Si lo dejas vacío, se dividirá equitativamente",
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: IconButton(
+                                          icon: const Icon(
+                                            Icons.delete_outline,
+                                          ),
+                                          onPressed: () =>
+                                              removeParticipant(index),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                  ),
+                ],
+              ),
+            ),
+
+            // BOTTOM FIXED SECTION
             TextFormField(
               controller: totalController,
               keyboardType: TextInputType.number,
@@ -89,82 +180,6 @@ class _BillFormScreenState extends State<BillFormScreen> {
               },
             ),
             const SizedBox(height: 24),
-
-            // PARTICIPANT SECTION TITLE
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Participantes",
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                TextButton(
-                  onPressed: addParticipant,
-                  child: const Text("Agregar"),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-
-            if (participants.isEmpty)
-              Center(
-                child: Text(
-                  "No hay participantes agregados todavía.",
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ),
-
-            // PARTICIPANTS LIST
-            ...participants.asMap().entries.map((entry) {
-              final index = entry.key;
-              final p = entry.value;
-
-              return Card(
-                margin: const EdgeInsets.only(bottom: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        controller: p.nameController,
-                        decoration: const InputDecoration(
-                          labelText: "Nombre",
-                          hintText: "Ej: Gabriel",
-                        ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return "Ingresa un nombre";
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: p.amountController,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: "Monto (opcional)",
-                          hintText:
-                              "Si lo dejas vacío, se dividirá equitativamente",
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: IconButton(
-                          icon: const Icon(Icons.delete_outline),
-                          onPressed: () => removeParticipant(index),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }),
           ],
         ),
       ),
